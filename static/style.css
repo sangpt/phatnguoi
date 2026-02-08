@@ -50,7 +50,8 @@ body {
 
 .logo i {
     font-size: 2rem;
-    color: #4a90e2; /* Fallback */
+    color: #4a90e2;
+    /* Fallback */
     background: var(--primary-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -97,19 +98,22 @@ body {
     color: var(--text-main);
 }
 
-.input-wrapper, .select-wrapper {
+.input-wrapper,
+.select-wrapper {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.input-wrapper i, .select-wrapper i {
+.input-wrapper i,
+.select-wrapper i {
     position: absolute;
     left: 15px;
     color: #aaa;
 }
 
-input, select {
+input,
+select {
     width: 100%;
     padding: 12px 15px 12px 45px;
     border: 2px solid #e1e1e1;
@@ -121,7 +125,8 @@ input, select {
     background: rgba(255, 255, 255, 0.9);
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
     border-color: #667eea;
 }
 
@@ -175,7 +180,9 @@ button:disabled {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .hidden {
@@ -201,14 +208,29 @@ button:disabled {
     color: white;
 }
 
-.success .icon-circle { background: var(--success-color); }
-.success h3 { color: var(--success-color); }
+.success .icon-circle {
+    background: var(--success-color);
+}
 
-.warning .icon-circle { background: var(--warning-color); }
-.warning h3 { color: #d39e00; }
+.success h3 {
+    color: var(--success-color);
+}
 
-.error .icon-circle { background: var(--danger-color); }
-.error h3 { color: var(--danger-color); }
+.warning .icon-circle {
+    background: var(--warning-color);
+}
+
+.warning h3 {
+    color: #d39e00;
+}
+
+.error .icon-circle {
+    background: var(--danger-color);
+}
+
+.error h3 {
+    color: var(--danger-color);
+}
 
 .violation-card {
     padding: 20px;
@@ -221,7 +243,7 @@ button:disabled {
     align-items: center;
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .v-plate {
@@ -272,6 +294,7 @@ button:disabled {
     background: #d4edda;
     color: #155724;
 }
+
 .phone a {
     text-decoration: none;
     color: var(--primary-color);
@@ -287,13 +310,53 @@ button:disabled {
 }
 
 /* Responsive */
+/* Responsive */
 @media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        margin-top: 10px;
+    }
+
+    .header {
+        margin-bottom: 20px;
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .search-card {
+        padding: 20px 15px;
+    }
+
     .v-row {
         flex-direction: column;
         align-items: flex-start;
     }
+
     .v-value {
         text-align: left;
-        margin-top: 2px;
+        margin-top: 4px;
+        word-break: break-word;
+        /* Prevent long text overflow */
+    }
+
+    .vehicle-type-group {
+        gap: 5px;
+    }
+
+    .vehicle-card {
+        padding: 10px 5px;
+    }
+
+    .vehicle-card i {
+        font-size: 1.2rem;
+    }
+
+    .vehicle-card span {
+        font-size: 0.8rem;
     }
 }
