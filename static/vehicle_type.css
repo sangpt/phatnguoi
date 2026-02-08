@@ -1,0 +1,56 @@
+/* Vehicle Type Radio Group */
+.vehicle-type-group {
+    display: flex;
+    gap: 10px;
+}
+
+.vehicle-option {
+    flex: 1;
+    cursor: pointer;
+}
+
+.vehicle-option input {
+    display: none; /* Hide default radio */
+}
+
+.vehicle-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 10px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.5); /* Lighter glass */
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.vehicle-card i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    color: var(--text-light);
+}
+
+.vehicle-card span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+/* Selected State */
+.vehicle-option input:checked + .vehicle-card {
+    border-color: #4a90e2;
+    background: rgba(74, 144, 226, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.vehicle-option input:checked + .vehicle-card i {
+    color: #4a90e2;
+}
+
+.vehicle-option input:checked + .vehicle-card span {
+    color: #4a90e2;
+    font-weight: 600;
+}

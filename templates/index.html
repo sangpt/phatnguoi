@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Phạt Nguội Toàn Quốc</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vehicle_type.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Tra Phạt Nguội</h1>
+            </div>
+            <p class="subtitle">Tra cứu vi phạm giao thông nhanh chóng, chính xác</p>
+        </header>
+
+        <!-- Search Box -->
+        <div class="search-card glass-effect">
+            <form id="searchForm">
+                <div class="form-group">
+                    <label for="plateInput">Biển số xe</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-car"></i>
+                        <input type="text" id="plateInput" placeholder="Ví dụ: 30H-123.45" required>
+                    </div>
+                    <small class="hint">Nhập liền hoặc có dấu gạch/chấm đều được</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Loại phương tiện</label>
+                    <div class="vehicle-type-group">
+                        <label class="vehicle-option">
+                            <input type="radio" name="vehicleType" value="1" checked>
+                            <div class="vehicle-card glass-effect">
+                                <i class="fas fa-car"></i>
+                                <span>Ô tô</span>
+                            </div>
+                        </label>
+                        <label class="vehicle-option">
+                            <input type="radio" name="vehicleType" value="2">
+                            <div class="vehicle-card glass-effect">
+                                <i class="fas fa-motorcycle"></i>
+                                <span>Xe máy</span>
+                            </div>
+                        </label>
+                        <label class="vehicle-option">
+                            <input type="radio" name="vehicleType" value="3">
+                            <div class="vehicle-card glass-effect">
+                                <i class="fas fa-bicycle"></i>
+                                <span>Xe điện</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" id="searchBtn">
+                    <span class="btn-text">Tra Cứu Ngay</span>
+                    <div class="spinner hidden"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultContainer" class="result-container hidden">
+            <!-- Dynamic Content Here -->
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Dữ liệu tham khảo từ cổng thông tin CSGT. Ứng dụng demo.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const plateInput = document.getElementById('plateInput').value;
+            const vehicleType = document.querySelector('input[name="vehicleType"]:checked').value;
+            console.log("Selected Vehicle Type:", vehicleType);
+            const btn = document.getElementById('searchBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const spinner = btn.querySelector('.spinner');
+            const resultContainer = document.getElementById('resultContainer');
+
+            if (!plateInput) return;
+
+            // UI Loading State
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            spinner.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            resultContainer.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plate: plateInput, type: vehicleType })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    renderResults(data.data);
+                } else {
+                    renderError(data.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+                }
+
+            } catch (error) {
+                console.error("Debug Error:", error); // Log full error
+                renderError('Gặp lỗi khi xử lý dữ liệu: ' + error.message);
+            } finally {
+                // Reset UI
+                btn.disabled = false;
+                btnText.style.display = 'block';
+                spinner.classList.add('hidden');
+                resultContainer.classList.remove('hidden');
+            }
+        });
+
+        function renderResults(violations) {
+            const container = document.getElementById('resultContainer');
+
+            if (!violations || violations.length === 0) {
+                container.innerHTML = `
+                    <div class="status-card success glass-effect">
+                        <div class="icon-circle">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3>Chúc mừng!</h3>
+                        <p>Không tìm thấy thông tin vi phạm cho biển số này.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="status-card warning glass-effect">
+                    <div class="icon-circle">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>Phát hiện ${violations.length} lỗi vi phạm</h3>
+                </div>
+            `;
+
+            violations.forEach(v => {
+                html += `
+                    <div class="violation-card glass-effect">
+                        <div class="v-header">
+                            <span class="v-plate">${v.bien_so || 'N/A'}</span>
+                            <span class="v-time">${v.thoi_gian || 'N/A'}</span>
+                        </div>
+                        <div class="v-body">
+                            <div class="v-row">
+                                <span class="v-label">Lỗi vi phạm:</span>
+                                <span class="v-value highlight">${v.hanh_vi || 'N/A'}</span>
+                            </div>
+                            <div class="v-row">
+                                <span class="v-label">Địa điểm:</span>
+                                <span class="v-value">${v.dia_diem || 'N/A'}</span>
+                            </div>
+                            <div class="v-row">
+                                <span class="v-label">Trạng thái:</span>
+                                <span class="v-value status-badge ${v.trang_thai?.includes('Đã') ? 'done' : 'pending'}">
+                                    ${v.trang_thai || 'Chưa rõ'}
+                                </span>
+                            </div>
+                            <div class="v-row">
+                                <span class="v-label">Đơn vị:</span>
+                                <span class="v-value">${v.don_vi || 'N/A'}</span>
+                            </div>
+                             <div class="v-row">
+                                <span class="v-label">Liên hệ:</span>
+                                <span class="v-value phone"><a href="tel:${v.lien_he}">${v.lien_he || ''}</a></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderError(msg) {
+            const container = document.getElementById('resultContainer');
+            container.innerHTML = `
+                <div class="status-card error glass-effect">
+                    <div class="icon-circle">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <h3>Lỗi Tra Cứu</h3>
+                    <p>${msg}</p>
+                </div>
+            `;
+            container.classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>
